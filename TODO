@@ -1,0 +1,7 @@
+TODO:
+
+qif-augment -n name:type -i $initial
+qif-rules -r rules
+qif-csv -c col:name,col:name,col:name
+
+Remove equity.qif

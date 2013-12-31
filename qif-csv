@@ -1,0 +1,40 @@
+#!/usr/bin/env python3.3	
+# Copyright 2013 Matt Smith <matt@forsetti.com>
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import sys
+from qif import QIF, QIFReader
+from csv import writer as CSVWriter,QUOTE_NONNUMERIC
+
+source_file=None
+target_file=None
+
+args=sys.argv[1:]	
+while(args):
+	if(source_file):
+		target_file=args[0]
+	else:
+		source_file=args[0]
+	del args[0]
+
+source=open(source_file,'r') if source_file else sys.stdin
+target=open(target_file,'w') if target_file else sys.stdout
+
+qr=QIFReader(source)
+cw=CSVWriter(target,quotechar='"')
+cw.writerow(["Date","Amount","Source","Target","Payee","Memo"])
+for record in qr:
+	cw.writerow([record.date.strftime("%Y-%m-%d"),record.amount,record.account_name,record.category,record.payee,record.memo])
+source.close()
+target.close()

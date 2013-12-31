@@ -1,0 +1,22 @@
+# Anything that already has a category ("L") should keep it.
+#  Note you could override existing categories by removing this rule,
+#   or by inserting rules before this one.
+*L
+	L:
+	
+Expenses:Auto:Gas
+	P:Gas
+
+#First match wins	
+Expenses:Rudolph's Christmas Store
+	P:Rudolph's Christmas Store
+
+#"Christmas Store" was already matched above
+Expenses:Misc Shopping:*P
+	P:Store
+
+#Anything not yet matched should get an account name matching
+#  Payee ("P"), be created under "Uncategorized"
+Uncategorized:*P
+	P:
+

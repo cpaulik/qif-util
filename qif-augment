@@ -1,0 +1,63 @@
+#!/usr/bin/env python3.3	
+# Copyright 2013 Matt Smith <matt@forsetti.com>
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import sys
+from qif import QIFReader, QIFWriter, QIFRecord
+
+account_name=None
+account_type=None
+source_file=None
+target_file=None
+initial_balance=0
+initial_date=None
+initial_account=None
+
+args=sys.argv[1:]	
+while(args):
+	if(args[0]=='-i'):
+		initial_balance=args[1]
+		del args[0:2]
+	elif(args[0]=='-d'):
+		initial_date=args[1]
+		del args[0:2]
+	elif(args[0]=='-a'):
+		initial_account=args[1]
+		del args[0:2]
+	elif(args[0]=='-n'):
+		account_name=args[1]
+		del args[0:2]
+	elif(args[0]=='-t'):
+		account_type=args[1]
+		del args[0:2]
+	else:
+		if(source_file):
+			target_file=args[0]
+		else:
+			source_file=args[0]
+		del args[0]
+
+source=open(source_file,'r') if source_file else sys.stdin
+target=open(target_file,'w') if target_file else sys.stdout
+
+qr=QIFReader(source)
+qw=QIFWriter(target,account_name,account_type)
+
+if(initial_balance and initial_date and initial_account):
+	qw.write(QIFRecord(account_name,account_type,[('D',initial_date),('T',initial_balance),('P',"Initial Balance (%s)"%(initial_balance)),('L',initial_account)]))
+
+for record in qr:
+	qw.write(record)
+source.close()
+target.close()

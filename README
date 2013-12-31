@@ -1,0 +1,56 @@
+Copyright 2013 Matt Smith <matt@forsetti.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-------------------------------------------------------------------------------
+
+qif-utils is a very small set of small tools to manipulate QIF files, 
+ written sloppily in a very small amount of time.
+ 
+IF SWALLOWED, DO NOT INDUCE VOMITING - SEEK MEDICAL ASSISTANCE IMMEDIATELY.
+
+Having used Gnucash very happily for a decade, I've always irritated by
+the manual method I needed to perform to map transactions to accounts.
+This code was written to automate some of that process, and posted in
+case anyone else can benefit from it.  However, do not rely on this code
+for anything significant -- only about 20 hours was put into development,
+most being spent tweaking the output process to give me something usable.
+
+There is no documentation other than this file, and there are no comments
+in the code.  There is also no error checking.  You have been warned.
+ 
+All utilities accept input and output parameters the same way:
+	Input can be supplied as a filename argument, or on stdin.
+	Output can be received on stdout, or as a filename argument
+		(only if Input is supplied as filename argument)
+		
+qif-augment [-n name] [-t type] [-a initial-account] [-d initial-date]
+            [-i initial balance] [input.qif] [output.qif]
+	-n Assign or override the name of the account in this qif file
+	-t Assign or override the type of the account in this qif file
+	-i Insert a transaction for the initial balance of this account
+	-d The date of the initial balance transaction
+	-a The source account/category for the initial balance transaction
+		
+qif-categorize -r rules.file  [input.qif] [output.qif]
+	-r A file containing the rules describing category assignment
+		(see doc/test.rules for example)
+		
+qif-csv [input.qif] [output.qif]
+	Outputs QIF information as a CSV, with fixed, hardcoded columns
+
+Example:
+  ./qif-augment -n "Liabilities:Credit Cards:Bank of Forsetti Credit Card"     \
+    -t CCard -i -200.00 -a "Equity:Opening Balances" -d 12/01/2013 doc/test.qif\
+    | ./qif-categorize -r doc/test.rules | ./qif-csv
+
