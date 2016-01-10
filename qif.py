@@ -40,12 +40,25 @@ class QIFRecord(list):
 		
 	@property
 	def date(self):
-		return(datetime.strptime(self['D'][-1],"%m/%d/%Y") if self['D'] else None)
-		
+            if not self['D']:
+                return None
+
+            datestr = self['D'][-1]
+            if "'" not in datestr:
+                return(datetime.strptime(datestr,"%m/%d/%Y"))
+            else:
+                # if year is in "'<year since 2000>" format
+                # handle appropriately
+                return(datetime.strptime(datestr,"%m/%d'%y"))
+	
 	@property	
 	def amount(self):
-		return(float(self['T'][-1]) if self['T'] else 0)
-				
+            if not self['T']:
+                return 0
+            else: 
+                # handle comma in value
+                return(float(self['T'][-1].replace(',', '')))
+
 	@property
 	def address(self):
 		return("\n".join(self['A']) if self['A'] else None)
