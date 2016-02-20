@@ -19,12 +19,6 @@ from datetime import datetime
 
 	
 class QIFRecord(list):
-	@property	
-	def amount(self):
-            if not self['T']:
-                return 0
-            else: 
-                # handle comma in value
     # dict access return/accept list of strings, properties return/accept
     # objects
 
@@ -60,7 +54,17 @@ class QIFRecord(list):
             # handle appropriately
             return(datetime.strptime(datestr, "%m/%d'%y"))
 
+    @property
+    def amount(self):
+        if not self['T'] and not self['$']:
+            return 0
+        else:
+            # handle comma in value
+            try:
                 return(float(self['T'][-1].replace(',', '')))
+            except IndexError:
+                return(float(self['$'][-1].replace(',', '')))
+
     @property
     def address(self):
         return("\n".join(self['A']) if self['A'] else None)
