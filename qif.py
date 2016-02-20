@@ -81,6 +81,16 @@ class QIFRecord(list):
     def memo(self, value):
         self["M"] = value.split('\n')
 
+    @property
+    def category(self):
+        if not self['L'] and not self['S']:
+            return None
+        else:
+            try:
+                return self['L'][-1]
+            except IndexError:
+                return self['S'][-1]
+
     @category.setter
     def category(self, category):
         self["L"] = [category]
@@ -91,9 +101,6 @@ class QIFRecord(list):
     def __lt__(self, other):
         return(self.date < other.date)
 
-	@property
-	def category(self):
-		return(self["L"][-1] if self['L'] else None)
 
 class QIF(list):
 
